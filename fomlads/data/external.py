@@ -5,7 +5,7 @@ import csv
 def import_for_classification(
         ifname, input_cols=None, target_col=None, classes=None):
     """
-    Imports the iris data-set and generates exploratory plots
+    Imports the data-set and generates exploratory plots
 
     parameters
     ----------
@@ -24,6 +24,10 @@ def import_for_classification(
     # if no file name is provided then use synthetic data
     dataframe = pd.read_csv(ifname)
     print("dataframe.columns = %r" % (dataframe.columns,) )
+    # if target dtype is int then change it to str
+    if dataframe[target_col].dtype != str:
+        dataframe[target_col] = dataframe[target_col].astype(str)
+    
     N = dataframe.shape[0]
     # if no target name is supplied we assume it is the last colunmn in the 
     # data file
@@ -44,7 +48,7 @@ def import_for_classification(
         class_values = dataframe[target_col]
         classes = class_values.unique()
     else:
-        # construct a 1d array of the rows to keep
+        # construct a 1d array of the rows to keep        
         to_keep = np.zeros(N,dtype=bool)
         for class_name in classes:
             to_keep |= (dataframe[target_col] == class_name)
@@ -61,7 +65,7 @@ def import_for_classification(
     for class_id, class_name in enumerate(classes):
         is_class = (class_values == class_name)
         targets[is_class] = class_id
-    #print("targets = %r" % (targets,))
+    print("targets = %r" % (targets,))
 
     # We're going to assume that all our inputs are real numbers (or can be
     # represented as such), so we'll convert all these columns to a 2d numpy
