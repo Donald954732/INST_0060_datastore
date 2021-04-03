@@ -44,22 +44,16 @@ def main():
     need_normalization = [ 'CreditScore', 'Age', 'Tenure', 'Balance','NumOfProducts','EstimatedSalary']
     churn_data[need_normalization] = normalisation(churn_data[need_normalization])
 
-    #FIRST TRY:
-    # Using Basis Function - RBF
-    centres = np.linspace(0,1,9)
-    scale = 0.1
-    #feature_mapping = construct_rbf_feature_mapping(centres, scale)
-    #designmtx = quadratic_feature_mapping(inputs)
-
-
     #Define inputs and targets in the dataframe
     inputs= churn_data[['CreditScore', 'Age', 'Tenure','Balance','NumOfProducts', 'EstimatedSalary']].to_numpy()
     targets = churn_data['Exited'].to_numpy()
 
-    #fit the data and plot the corresponding ROC and confusion matrix
+    #fit the data
+    # Plot the corresponding ROC 
+    # Plot the confusion matrix
     fig_ax = fit_and_plot_roc_confusion_matrix_logistic_regression(inputs, targets, colour = 'b')
 
-    #TRAIN AND TEST DATA AND THRESHOLD 
+    #Split the dataset into test and train sets
     train_set, test_set = split_train_test(churn_data, test_ratio= 0.2)
 
         #Define inputs and outputs for both sets:
@@ -68,10 +62,11 @@ def main():
     test_inputs = test_set[['CreditScore', 'Age', 'Tenure','Balance','NumOfProducts', 'EstimatedSalary']].to_numpy()
     test_targets = test_set['Exited'].to_numpy()
 
-        #Need to change that or check it's a good idea to use that 
+    #Get the test and train errors 
     reg_params = np.linspace(0, 2)
     train_errors, test_errors = test_parameter_logistic(train_inputs, train_targets, test_inputs, test_targets, parameter_values= reg_params)
     
+    #Plot the test and train errors 
     plot_train_test_errors('Threshold', reg_params, train_errors, test_errors)
 
     plt.show()
@@ -93,7 +88,6 @@ def fit_and_plot_roc_confusion_matrix_logistic_regression(
     #
     thresholds = np.linspace(0,1.5,1000)
     
-
     false_positive_rates, true_positive_rates = false_true_rates(inputs, targets, weights, thresholds)
 
     fig1, ax1 = plot_roc(
