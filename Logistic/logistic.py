@@ -13,6 +13,7 @@ from fomlads.evaluate.eval_classification import confusion_matrix
 from fomlads.evaluate.eval_classification import misclassification_error
 from fomlads.evaluate.eval_logistic import test_parameter_logistic
 from fomlads.evaluate.eval_classification import false_true_rates
+from fomlads.evaluate.eval_classification import f1_score
 from fomlads.evaluate.eval_logistic import cross_validation
 
 from fomlads.model.classification import logistic_regression_fit
@@ -49,9 +50,24 @@ def main():
     targets = churn_data['Exited'].to_numpy()
 
     #fit the data
+    weights = logistic_regression_fit(inputs, targets)
+    predicts = logistic_regression_predict(inputs, weights)
+    
     # Plot the corresponding ROC 
+    thresholds = np.linspace(0,1.5,1000)
+    false_positive_rates, true_positive_rates = false_true_rates(inputs, targets, weights, thresholds)
+    fig1, ax1 = plot_roc(
+        false_positive_rates, true_positive_rates)
+       # and for the class prior we learnt from the model
+    num_neg = np.sum(1-targets)
+    num_pos = np.sum(targets)
+    predicts = logistic_regression_predict(inputs, weights)
+    fpr = np.sum((predicts == 1) & (targets == 0))/num_neg
+    tpr = np.sum((predicts == 1) & (targets == 1))/num_pos
+    ax1.plot([fpr], [tpr], 'rx', markersize=8, markeredgewidth=2)
+
     # Plot the confusion matrix
-    fig_ax = fit_and_plot_roc_confusion_matrix_logistic_regression(inputs, targets, colour = 'b')
+    fig2, ax2 = confusion_matrix(targets, predicts)
 
     #Split the dataset into test and train sets
     train_set, test_set = split_train_test(churn_data, test_ratio= 0.2)
@@ -72,41 +88,8 @@ def main():
     plt.show()
 
 
-def fit_and_plot_roc_confusion_matrix_logistic_regression(
-        inputs, targets, fig_ax=None, colour=None):
-    """
-    Takes input and target data for classification and fits shared covariance
-    model. Then plots the ROC corresponding to the fit model.
-
-    parameters
-    ----------
-    inputs - a 2d input matrix (array-like), each row is a data-point
-    targets - 1d target vector (array-like) -- can be at most 2 classes ids
-        0 and 1
-    """
-    weights = logistic_regression_fit(inputs, targets)
-    #
-    thresholds = np.linspace(0,1.5,1000)
-    
-    false_positive_rates, true_positive_rates = false_true_rates(inputs, targets, weights, thresholds)
-
-    fig1, ax1 = plot_roc(
-        false_positive_rates, true_positive_rates, fig_ax=fig_ax, colour=colour)
-
-
-    # and for the class prior we learnt from the model
-    num_neg = np.sum(1-targets)
-    num_pos = np.sum(targets)
-    predicts = logistic_regression_predict(inputs, weights)
-    fpr = np.sum((predicts == 1) & (targets == 0))/num_neg
-    tpr = np.sum((predicts == 1) & (targets == 1))/num_pos
-    ax1.plot([fpr], [tpr], 'rx', markersize=8, markeredgewidth=2)
-
-    #Confusion matrix
-    fig2, ax2 = confusion_matrix(targets, predicts)
-    return (fig1, fig2), (ax1, ax2)
-
-
+    f1 = f1_score(targets, predicts)
+    print(f1)
 
 
 if __name__ == "__main__":

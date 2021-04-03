@@ -169,4 +169,13 @@ def false_true_rates(inputs, targets,  weights, thresholds):
         true_positive_rates[i] = np.sum(num_true_positives)/num_pos
     return false_positive_rates, true_positive_rates
 
+def f1_score(targets, predicts):
+    true_positives = np.sum((predicts == 1) & (targets == 1))
+    predicted_postives = np.sum((predicts == 1))
+    actual_positves = np.sum((targets == 1))
+    precision = true_positives/predicted_postives
+    recall = true_positives/ actual_positves
+    f1=  2*(precision* recall)/(precision+ recall)
+    return f1
+
 
