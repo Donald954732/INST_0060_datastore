@@ -3,8 +3,6 @@ import numpy as np
 import numpy.linalg as linalg
 import matplotlib.pyplot as plt
 
-from fomlads.model.basis_functions import expand_to_monomials
-
 def ml_weights(inputs, targets):
     """
     This method returns the weights that give the best linear fit between
@@ -12,7 +10,7 @@ def ml_weights(inputs, targets):
     """
     Phi = np.matrix(inputs)
     targets = np.matrix(targets).reshape((len(targets),1))
-    weights = linalg.inv(Phi.T*Phi)*Phi.T*targets
+    weights = linalg.inv(Phi.transpose()*Phi)*Phi.transpose()*targets
     return np.array(weights).flatten()
 
 def regularised_ml_weights(
@@ -25,7 +23,7 @@ def regularised_ml_weights(
     Phi = np.matrix(inputs)
     targets = np.matrix(targets).reshape((len(targets),1))
     I = np.identity(Phi.shape[1])
-    weights = linalg.inv(reg_param*I + Phi.T*Phi)*Phi.T*targets
+    weights = linalg.inv(reg_param*I + Phi.transpose()*Phi)*Phi.transpose()*targets
     return np.array(weights).flatten()
 
 

@@ -169,4 +169,13 @@ def import_data_simple(ifname, delimiter=None, header=False, columns=None):
     # return this array to caller (and field_names if provided)
     return data_as_array, field_names
 
+def normalisation(data):
+    """ 
+    Takes pandas dataframe data, normalise it and then retun the normalise version
+    """
+    minimum = data.min().copy()
+    maximum = data.max().copy()
+    return (data-minimum)/(maximum-minimum)
 
+
+    

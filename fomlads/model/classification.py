@@ -153,7 +153,7 @@ def shared_covariance_model_predict(inputs, pi, mean0, mean1, covmtx):
     return (posterior_probs >= 0.5).astype(int)
 
 def logistic_regression_fit(
-        inputs, targets, weights0=None, threshold=1e-8):
+        inputs, targets, weights0=None, threshold=1e-15):
     """
     Fits a set of weights to the logistic regression model using the iteratively
     reweighted least squares (IRLS) method (Rubin, 1983)
@@ -191,7 +191,9 @@ def logistic_regression_fit(
         # reshape predicts to be same form as targets
         predicts = np.matrix(predicts).reshape((N,1))
         # Calculate the Hessian inverse
-        H_inv = np.linalg.inv(inputs.T*R*inputs)
+        j = inputs.T*R*inputs
+    
+        H_inv = np.linalg.inv(j)
         # update the weights
         new_weights = weights - H_inv*inputs.T*np.matrix(predicts-targets)
         # calculate the update_magnitude
@@ -226,3 +228,12 @@ def logistic_regression_prediction_probs(inputs, weights):
     inputs = np.matrix(inputs)
     return logistic_sigmoid(np.array(inputs*weights).flatten())
 
+def split_train_test(data, test_ratio = 0.25):
+    """
+    Takes a dataframe and splits it into training and testing dataframes following the test_ratio provided
+    """
+    shuffled_indices = np.random.permutation(len(data))
+    test_set_size = int(len(data) * test_ratio)
+    test_indices = shuffled_indices[:test_set_size]
+    train_indices = shuffled_indices[test_set_size:]
+    return data.iloc[train_indices], data.iloc[test_indices]

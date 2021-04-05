@@ -7,9 +7,9 @@ from fomlads.model.regression import regularised_ml_weights
 from fomlads.model.regression import linear_model_predict
 
 # for higher level functions
-from fomlads.evaluate.partition import train_and_test_filter
-from fomlads.evaluate.partition import train_and_test_partition
-from fomlads.evaluate.partition import create_cv_folds
+from fomlads.evaluation.partition import train_and_test_filter
+from fomlads.evaluation.partition import train_and_test_partition
+from fomlads.evaluation.partition import create_cv_folds
 
 def evaluate_linear_model(
         inputs, targets, test_fraction=None, reg_param=None):
