@@ -50,11 +50,12 @@ def main():
     targets = churn_data['Exited'].to_numpy()
 
     #fit the data
-    weights = logistic_regression_fit(inputs, targets)
+    weights0 = [[-2.34638722],[ 2.95771962], [-0.83998782], [ 0.33543447], [-0.95895075], [-0.63736684]]
+    weights = logistic_regression_fit(inputs, targets, weights0= weights0, threshold = 1e-30)
     predicts = logistic_regression_predict(inputs, weights)
-    
+    print(weights)
     # Plot the corresponding ROC 
-    thresholds = np.linspace(0,1.5,1000)
+    thresholds = np.linspace(0,1.5,100)
     false_positive_rates, true_positive_rates = false_true_rates(inputs, targets, weights, thresholds)
     fig1, ax1 = plot_roc(
         false_positive_rates, true_positive_rates)
@@ -79,7 +80,7 @@ def main():
     test_targets = test_set['Exited'].to_numpy()
 
     #Get the test and train errors 
-    reg_params = np.linspace(0, 2)
+    reg_params = np.linspace(0, 0.75)
     train_errors, test_errors = test_parameter_logistic(train_inputs, train_targets, test_inputs, test_targets, parameter_values= reg_params)
     
     #Plot the test and train errors 

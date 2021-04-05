@@ -56,7 +56,7 @@ def expected_loss(targets, predicts, lossmtx):
         + lossmtx[0,1]*np.sum(class1 & predicts1)
     class1loss = lossmtx[1,0]*np.sum(class0 & predicts0) \
         + lossmtx[1,1]*np.sum(class1 & predicts1)
-    N = targets.size()
+    N = targets.shape
     error = (class0loss + class1loss)/N
     return error
 
