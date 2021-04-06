@@ -212,7 +212,7 @@ def logistic_regression_predict(inputs, weights):
     weights - a set of model weights
     """
     prediction_probs = logistic_regression_prediction_probs(inputs, weights)
-    return (prediction_probs > 0.5).astype(int)
+    return (prediction_probs>0.5).astype(int)
 
 def logistic_regression_prediction_probs(inputs, weights):
     """

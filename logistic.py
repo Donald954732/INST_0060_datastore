@@ -46,14 +46,13 @@ def main():
     churn_data[need_normalization] = normalisation(churn_data[need_normalization])
 
     #Define inputs and targets in the dataframe
-    inputs= churn_data[['CreditScore', 'Age', 'Tenure','Balance','NumOfProducts', 'EstimatedSalary']].to_numpy()
+    inputs= churn_data[need_normalization].to_numpy()
     targets = churn_data['Exited'].to_numpy()
 
     #fit the data
-    weights0 = [[-2.34638722],[ 2.95771962], [-0.83998782], [ 0.33543447], [-0.95895075], [-0.63736684]]
-    weights = logistic_regression_fit(inputs, targets, weights0= weights0, threshold = 1e-30)
+    weights = logistic_regression_fit(inputs, targets, threshold = 1e-8)
     predicts = logistic_regression_predict(inputs, weights)
-    print(weights)
+ 
     # Plot the corresponding ROC 
     thresholds = np.linspace(0,1.5,100)
     false_positive_rates, true_positive_rates = false_true_rates(inputs, targets, weights, thresholds)
@@ -62,10 +61,9 @@ def main():
        # and for the class prior we learnt from the model
     num_neg = np.sum(1-targets)
     num_pos = np.sum(targets)
-    predicts = logistic_regression_predict(inputs, weights)
     fpr = np.sum((predicts == 1) & (targets == 0))/num_neg
     tpr = np.sum((predicts == 1) & (targets == 1))/num_pos
-    ax1.plot([fpr], [tpr], 'rx', markersize=8, markeredgewidth=2)
+    ax1.plot([fpr], [tpr], 'rx', markersize=8, markeredgewidth=2, color = 'b')
 
     # Plot the confusion matrix
     fig2, ax2 = confusion_matrix(targets, predicts)
