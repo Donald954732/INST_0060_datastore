@@ -50,7 +50,7 @@ def main():
     targets = churn_data['Exited'].to_numpy()
 
     #fit the data
-    weights = logistic_regression_fit(inputs, targets, threshold = 1e-8)
+    weights = logistic_regression_fit(inputs, targets, threshold = 1e-30)
     predicts = logistic_regression_predict(inputs, weights)
  
     # Plot the corresponding ROC 
