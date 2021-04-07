@@ -49,6 +49,10 @@ def main():
     inputs= churn_data[need_normalization].to_numpy()
     targets = churn_data['Exited'].to_numpy()
 
+    fit_evaluate_logistic(inputs, targets, churn_data)
+
+def fit_evaluate_logistic(inputs, targets, data):
+
     #fit the data
     weights = logistic_regression_fit(inputs, targets, threshold = 1e-30)
     predicts = logistic_regression_predict(inputs, weights)
@@ -69,7 +73,7 @@ def main():
     fig2, ax2 = confusion_matrix(targets, predicts)
 
     #Split the dataset into test and train sets
-    train_set, test_set = split_train_test(churn_data, test_ratio= 0.2)
+    train_set, test_set = split_train_test(data, test_ratio= 0.2)
 
         #Define inputs and outputs for both sets:
     train_inputs = train_set[['CreditScore', 'Age', 'Tenure','Balance','NumOfProducts', 'EstimatedSalary']].to_numpy()
