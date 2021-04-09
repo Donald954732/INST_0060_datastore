@@ -61,6 +61,13 @@ def fit_evaluate_logistic(inputs, targets, data):
     test_inputs = test_set[['CreditScore', 'Age', 'Tenure','Balance','NumOfProducts', 'EstimatedSalary']].to_numpy()
     test_targets = test_set['Exited'].to_numpy()
 
+    #Test the parameters
+    reg_params = np.linspace(0, 0.75)
+    train_errors, test_errors = test_parameter_logistic(train_inputs, train_targets, test_inputs, test_targets, parameter_values= reg_params)
+    
+    #Plot the test and train errors 
+    plot_train_test_errors('Threshold', reg_params, train_errors, test_errors)
+
     #fit the data
     weights = logistic_regression_fit(train_inputs, train_targets, threshold = 1e-8)
     predicts_test = logistic_regression_predict(test_inputs, weights)
@@ -73,20 +80,12 @@ def fit_evaluate_logistic(inputs, targets, data):
 
     # Plot the confusion matrix
     fig2, ax2 = confusion_matrix(test_targets, predicts_test)
-    
 
-    #Test the parameters
-    reg_params = np.linspace(0, 0.75)
-    train_errors, test_errors = test_parameter_logistic(train_inputs, train_targets, test_inputs, test_targets, parameter_values= reg_params)
-    
-    #Plot the test and train errors 
-    plot_train_test_errors('Threshold', reg_params, train_errors, test_errors)
-
-    plt.show()
-
-
+    #Get F1 score
     f1 = f1_score(test_targets, predicts_test)
     print(f1)
+
+    plt.show()
 
 if __name__ == "__main__":
     
