@@ -12,7 +12,7 @@ from fomlads.plot.evaluations import plot_train_test_errors
 from fomlads.evaluate.eval_classification import confusion_matrix
 from fomlads.evaluate.eval_logistic import test_parameter_logistic
 from fomlads.evaluate.eval_classification import false_true_rates
-from fomlads.evaluate.eval_classification import f1_score
+from fomlads.evaluate.eval_classification import score
 
 from fomlads.model.classification import logistic_regression_fit
 from fomlads.model.classification import logistic_regression_predict
@@ -64,8 +64,9 @@ def fit_evaluate_logistic(inputs, targets, data):
     #Plot the test and train errors 
     plot_train_test_errors('Threshold', reg_params, train_errors, test_errors)
 
-    #fit the data
+    #fit the model to the train data
     weights = logistic_regression_fit(train_inputs, train_targets, threshold = 1e-8)
+    #Get the prediction for the test data
     predicts_test = logistic_regression_predict(test_inputs, weights)
  
     # Plot the corresponding ROC 
@@ -77,9 +78,13 @@ def fit_evaluate_logistic(inputs, targets, data):
     # Plot the confusion matrix
     fig2, ax2 = confusion_matrix(test_targets, predicts_test)
 
-    #Get F1 score
-    f1 = f1_score(test_targets, predicts_test)
-    print(f1)
+    #Get evaluation scores
+    f1, precision, recall, accuracy = score(test_targets, predicts_test)
+    print(f1, 'f1-score')
+    print(precision, 'precision')
+    print(recall, 'recall')
+    print(accuracy, 'accuracy')
+
 
     plt.show()
 
