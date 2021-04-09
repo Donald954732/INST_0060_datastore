@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import random
-from fomlads.evaluate.eval_classification import f1_score
+from fomlads.evaluate.eval_classification import score
 from sklearn.ensemble import RandomForestClassifier
 import sys
 import pickle
@@ -120,7 +120,11 @@ print("Confusion Matrix")
 conf_matrix = cf_matrix(y_test, y_pred)
 print(conf_matrix)
 print("F1_Score")
-print(f1_score(y_test, y_pred))
+f1, precision, recall, accuracy = score(y_test, y_pred)
+print(f1, 'f1-score')
+print(precision, 'precision')
+print(recall, 'recall')
+print(accuracy, 'accuracy')
 
 
 def true_false_positive(threshold_vector, y_test):
