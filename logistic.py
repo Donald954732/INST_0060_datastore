@@ -6,21 +6,17 @@ from itertools import chain
 import numpy as np 
 
 from fomlads.data.external import import_for_classification
-from fomlads.data.external import normalisation
+from fomlads.data.external import standard_scaler
 from fomlads.plot.evaluations import plot_roc
 from fomlads.plot.evaluations import plot_train_test_errors
-##from fomlads.evaluate.eval_classification import confusion_matrix
+from fomlads.evaluate.eval_classification import confusion_matrix
 from fomlads.evaluate.eval_logistic import test_parameter_logistic
 from fomlads.evaluate.eval_classification import false_true_rates
-##from fomlads.evaluate.eval_classification import f1_score
+from fomlads.evaluate.eval_classification import f1_score
 
 from fomlads.model.classification import logistic_regression_fit
 from fomlads.model.classification import logistic_regression_predict
 from fomlads.model.classification import split_train_test
-
-from sklearn.metrics import confusion_matrix, accuracy_score,f1_score, roc_curve, classification_report,roc_auc_score
-from sklearn.linear_model import LogisticRegression
-
 
 def main():
 
@@ -40,7 +36,7 @@ def main():
 
     #Normalise the data for the logistic regression 
     need_normalization = [ 'CreditScore', 'Age', 'Tenure', 'Balance','NumOfProducts','EstimatedSalary']
-    churn_data[need_normalization] = normalisation(churn_data[need_normalization])
+    churn_data[need_normalization] = standard_scaler(churn_data[need_normalization])
 
     #Define inputs and targets in the dataframe
     inputs= churn_data[need_normalization].to_numpy()
@@ -55,14 +51,14 @@ def fit_evaluate_logistic(inputs, targets, data):
     #Split the dataset into test and train sets
     train_set, test_set = split_train_test(data, test_ratio= 0.2)
 
-        #Define inputs and outputs for both sets:
+    #Define inputs and outputs for both sets:
     train_inputs = train_set[['CreditScore', 'Age', 'Tenure','Balance','NumOfProducts', 'EstimatedSalary']].to_numpy()
     train_targets = train_set['Exited'].to_numpy()
     test_inputs = test_set[['CreditScore', 'Age', 'Tenure','Balance','NumOfProducts', 'EstimatedSalary']].to_numpy()
     test_targets = test_set['Exited'].to_numpy()
 
     #Test the parameters
-    reg_params = np.linspace(0, 0.75)
+    reg_params = np.linspace(0, 1.5)
     train_errors, test_errors = test_parameter_logistic(train_inputs, train_targets, test_inputs, test_targets, parameter_values= reg_params)
     
     #Plot the test and train errors 
