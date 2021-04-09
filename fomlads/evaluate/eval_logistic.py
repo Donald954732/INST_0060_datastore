@@ -46,56 +46,7 @@ def test_parameter_logistic(train_inputs, train_targets, test_inputs, test_targe
     return train_errors, test_errors
 
 
-def cross_validation(inputs, targets, weights, k=4):
-    """
-    Takes inputs and outputs and run a cross validation test on them.
-    Fit the model and evaluate the test and train error 
-    inputs - input data
-    targets - target data
-    weights - when the weights have been established 
-    k - number of fold 
 
-    Return
-    -----------
-    returns  fig of error for test and train of all the folds 
-    """
-     
-    shuffled_indices= np.random.permutation(len(inputs))
-    size = int(len(inputs)/k)
-
-
-    train_errors = []
-    test_errors =[]
-
-    for i in np.arange(1, k): 
-        #Take data from only one of the splits
-        start = size*(i-1)
-        stop = size*i
-        indices = shuffled_indices[start:stop]
-        inputs_1 = inputs.iloc[indices]
-        targets_1 = targets.iloc[indices]
-        ## Split dataframe into train and test 
-        split_indices = np.random.permutation(len(inputs_1))
-        test_set_size = int(len(inputs_1) * 0.25)
-        test_indices = split_indices[:test_set_size]
-        train_indices = split_indices[test_set_size:]
-        
-        train_inputs = inputs.iloc[train_indices]
-        train_targets = targets.iloc[train_indices]
-
-        test_inputs = inputs.iloc[test_indices]
-        test_targets = targets.iloc[test_indices]
-        
-        train_predict_probs = logistic_regression_prediction_probs(train_inputs, weights)
-        test_predict_probs = logistic_regression_prediction_probs(test_inputs, weights)
-
-        train_error = cross_entropy_error(train_targets, train_predict_probs)
-        test_error = cross_entropy_error(test_targets, test_predict_probs)
-        train_errors.append(train_error)
-        test_errors.append(test_error)
-
-    plot_train_test_errors("cross validation", np.arange(k), train_errors, test_errors)
-    
 
 
 

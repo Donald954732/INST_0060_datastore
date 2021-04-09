@@ -80,10 +80,10 @@ def fit_evaluate_logistic(inputs, targets, data):
 
     #Get evaluation scores
     f1, precision, recall, accuracy = score(test_targets, predicts_test)
-    print(f1, 'f1-score')
-    print(precision, 'precision')
-    print(recall, 'recall')
-    print(accuracy, 'accuracy')
+    print(round(f1, 2), 'f1-score')
+    print(round(precision, 2), 'precision')
+    print(round(recall, 2), 'recall')
+    print(round(accuracy, 2), 'accuracy')
 
 
     plt.show()
