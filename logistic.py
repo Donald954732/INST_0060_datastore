@@ -10,19 +10,13 @@ from fomlads.data.external import normalisation
 from fomlads.plot.evaluations import plot_roc
 from fomlads.plot.evaluations import plot_train_test_errors
 from fomlads.evaluate.eval_classification import confusion_matrix
-from fomlads.evaluate.eval_classification import misclassification_error
 from fomlads.evaluate.eval_logistic import test_parameter_logistic
 from fomlads.evaluate.eval_classification import false_true_rates
 from fomlads.evaluate.eval_classification import f1_score
-from fomlads.evaluate.eval_logistic import cross_validation
 
 from fomlads.model.classification import logistic_regression_fit
 from fomlads.model.classification import logistic_regression_predict
-from fomlads.model.classification import logistic_regression_prediction_probs
 from fomlads.model.classification import split_train_test
-
-from fomlads.model.regression import construct_feature_mapping_approx
-from fomlads.model.basis_functions import quadratic_feature_mapping
 
 
 def main():
