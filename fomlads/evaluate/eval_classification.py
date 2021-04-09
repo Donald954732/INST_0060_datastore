@@ -177,11 +177,11 @@ def score(targets, predicts):
 
 
 
-    correct_prediction = result[0][0] + result[1][1]
+    correct_prediction = result[1][1] + result[0][0]
     total_prediction = np.size(predicts)
-    true_positives = result[0][0]
-    predicted_postives = result[0][0] + result[0][1]
-    actual_positves = result[0][0] + result[1][0]
+    true_positives = result[1][1]
+    predicted_postives = result[1][1] + result[1][0]
+    actual_positves = result[1][1] + result[0][1]
     precision = true_positives/predicted_postives
     recall = true_positives/ actual_positves
     f1=  2*(precision* recall)/(precision+ recall)
