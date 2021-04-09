@@ -48,7 +48,7 @@ def main():
 def fit_evaluate_logistic(inputs, targets, data):
 
     #fit the data
-    weights = logistic_regression_fit(inputs, targets, threshold = 1e-30)
+    weights = logistic_regression_fit(inputs, targets, threshold = 1e-8)
     predicts = logistic_regression_predict(inputs, weights)
  
     # Plot the corresponding ROC 
