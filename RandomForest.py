@@ -6,6 +6,10 @@ from fomlads.evaluate.eval_classification import score, two_class_cf_matrix, roc
 from sklearn.ensemble import RandomForestClassifier
 import sys
 import pickle
+from preprocessing import pre_process
+
+
+#import preprocess 
 
 ##run using python RandomForesy.py dataset target train_test_split_ratio useBalanced_weight
 #  dataset: directory to data set
@@ -26,108 +30,89 @@ import pickle
 
 
 
-#Fixing all random state
-np.random.seed(123)
-
-input_data = pd.read_csv(sys.argv[1])
-input_data.head()
-
-print("Checking Data")
-print('\nNull Values \n{}'.format(input_data.isnull().sum()))
-
-print('\nDuplicated values {}'.format(input_data.duplicated().sum()))
-
-print(input_data.head())
-
-
-#Split Data
-from fomlads.model.classification import split_train_test
-train_set, test_set = split_train_test(input_data, test_ratio=float(sys.argv[3]))
-X_test = test_set.drop([sys.argv[2]], axis=1)
-y_test = test_set[sys.argv[2]]
-
-count_class_0, count_class_1 = train_set.Exited.value_counts()
-
-df_class_0 = train_set[train_set[sys.argv[2]] == 0]
-df_class_1 = train_set[train_set[sys.argv[2]] == 1]
-
-print("classs count in train")
-print("0: ",count_class_0)
-print("1: ",count_class_1)
-
-
-print("Building Classifier")
-if sys.argv[4] == "balance":
-    print("building classifier with balanced weight")
-    X_train = train_set.drop([sys.argv[2]], axis=1)
-    y_train = train_set[sys.argv[2]]
-    rf_Classifier = RandomForestClassifier(class_weight={0: 1, 1:4}, random_state=123)
-    rf_Classifier.fit(X_train, y_train)
-    
-else:
-    print("Not using balanced weight")
-    if sys.argv[4] == "undersample":
-        df_class_0_under = df_class_0.sample(count_class_1)
-        df_train_under = pd.concat([df_class_0_under, df_class_1], axis=0)
-        print('Random under-sampling:')
-        print(df_train_under.Exited.value_counts())
-        X_train = df_train_under.drop([sys.argv[2]], axis=1)
-        y_train = df_train_under[sys.argv[2]]
-    elif sys.argv[4] == "oversample":
-        df_class_1_over = df_class_1.sample(count_class_0, replace=True)
-        df_train_over = pd.concat([df_class_0, df_class_1_over], axis=0)
-        print('Random over-sampling:')
-        print(df_train_over.Exited.value_counts())
-        X_train = df_train_over.drop([sys.argv[2]], axis=1)
-        y_train = df_train_over[sys.argv[2]]
+def rf_main(X_train, y_train, X_test, y_test, weight_balance):
+    print("Building Classifier")
+    if weight_balance == True:
+        print("building classifier with balanced weight")
+        rf_Classifier = RandomForestClassifier(class_weight={0: 1, 1:4}, random_state=123)
+        rf_Classifier.fit(X_train, y_train)
+        
     else:
-        print("no stretegy")
-        X_train = train_set.drop([sys.argv[2]], axis=1)
-        y_train = train_set[sys.argv[2]]
-    rf_Classifier = RandomForestClassifier(random_state=123)
-    rf_Classifier.fit(X_train, y_train)
+        print("Not using balanced weight")
+        rf_Classifier = RandomForestClassifier(random_state=123)
+        rf_Classifier.fit(X_train, y_train)
 
-pickle.dump(rf_Classifier, open("RF_model.object", "wb+"))
+    pickle.dump(rf_Classifier, open("RF_model.object", "wb+"))
 
-y_pred = rf_Classifier.predict(X_test)
+    y_pred = rf_Classifier.predict(X_test)
 
-print("Metrics:")
-print("Confusion Matrix")
-cf = two_class_cf_matrix(y_test, y_pred)
-print(cf)
+    #Metrics
+    print("Metrics:")
 
-print("F1_Score")
-f1 = two_class_f1_score(y_test, y_pred)
-print(f1)
+    #CF Matrix
+    print("Confusion Matrix")
+    cf = two_class_cf_matrix(y_test, y_pred)
+    print(cf)
 
-prob_vector = rf_Classifier.predict_proba(X_test)
+    #F1 Score
+    print("F1_Score")
+    f1 = two_class_f1_score(y_test, y_pred)
+    print(f1)
 
-plt.figure(figsize=(15,7))
-prob_vector = rf_Classifier.predict_proba(X_test)[:, 1]
-#print(prob_vector)
-print(len(prob_vector))
-ROC = roc(prob_vector,y_test, partitions=100)
-#print(ROC)
-plt.scatter(ROC[:,0],ROC[:,1],color='#0F9D58',s=30)
-plt.title('ROC Curve',fontsize=20)
-plt.xlabel('False Positive Rate',fontsize=16)
-plt.ylabel('True Positive Rate',fontsize=16)
-fpr, tpr = ROC[:, 0], ROC[:, 1]
-plt.show()
+    prob_vector = rf_Classifier.predict_proba(X_test)
 
-auc = roc_auc(prob_vector,y_test, partitions=100)
-print('Area under curve={}'.format(auc))
-plt.show()
+    plt.figure(figsize=(15,7))
+    prob_vector = rf_Classifier.predict_proba(X_test)[:, 1]
+    #print(prob_vector)
+    print(len(prob_vector))
+    ROC = roc(prob_vector,y_test, partitions=100)
+    #print(ROC)
+    plt.scatter(ROC[:,0],ROC[:,1],color='#0F9D58',s=30)
+    plt.title('ROC Curve',fontsize=20)
+    plt.xlabel('False Positive Rate',fontsize=16)
+    plt.ylabel('True Positive Rate',fontsize=16)
+    fpr, tpr = ROC[:, 0], ROC[:, 1]
+    plt.show()
 
+    #AUC-ROC
+    auc = roc_auc(prob_vector,y_test, partitions=100)
+    print('Area under curve={}'.format(auc))
+    plt.show()
 
-print("Feature importance")
-importance = pd.Series(rf_Classifier.feature_importances_, index=X_train.columns).sort_values(ascending=False)
-print(importance)
-import seaborn as sns
-plt.figure(figsize=(10,10))
-sns.barplot(x=importance, y=importance.index)
-# Add labels to your graph
-plt.xlabel('Importance Score')
-plt.ylabel('Features')
-plt.title("Freature Importances Plot")
-plt.show()
+    ##Feature Importance
+    print("Feature importance")
+    importance = pd.Series(rf_Classifier.feature_importances_, index=X_train.columns).sort_values(ascending=False)
+    print(importance)
+    import seaborn as sns
+    plt.figure(figsize=(10,10))
+    sns.barplot(x=importance, y=importance.index)
+    # Add labels to your graph
+    plt.xlabel('Importance Score')
+    plt.ylabel('Features')
+    plt.title("Freature Importances Plot")
+    plt.show()
+
+if __name__ == '__main__':
+    np.random.seed(123)
+    '''
+    column_to_drop = list(input("Input the column to drop :").split(','))
+    word_label = list(input("Input the word label columns ").split(','))
+    target_column = input("Please Input Target Column: ")
+    test_ratio = float(input("Please Input train test ratio: "))
+    stretegy = input("Please Input Class Balancing Stretegy:")
+    weight_balance_input = input("Balace Weight")
+    weight_balance = True if weight_balance_input == "True" else False
+    '''
+    ##For Testing
+    column_to_drop = ['RowNumber', 'Surname', 'CustomerId']
+    word_label = ['Gender', 'Geography']
+    target_column = "Exited"
+    test_ratio = 0.2
+    stretegy = "oversample"
+    weight_balance = False
+    ##
+    input_data = pd.read_csv(sys.argv[1])
+    input_data.head()
+    X_train, y_train, X_test, y_test = pre_process(input_data, column_to_drop, word_label, target_column, test_ratio, stretegy)
+    
+    rf_main(X_train, y_train, X_test, y_test, weight_balance)
