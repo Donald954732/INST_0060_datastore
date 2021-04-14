@@ -11,7 +11,7 @@ python pre-processing.py dataset
 
 
 
-def pre_process(input_data, column_to_drop, word_label, target_column, test_ratio, stretegy):
+def pre_process(input_data, column_to_drop, word_label, target_column, test_ratio, strategy = 'oversample'):
 
     np.random.seed(123)
 
@@ -57,15 +57,15 @@ def pre_process(input_data, column_to_drop, word_label, target_column, test_rati
     print("0: ",count_class_0)
     print("1: ",count_class_1)
 
-    #stretegy = input("Please Input Class Balancing Stretegy:")
-    if stretegy == "undersample":
+    #strategy = input("Please Input Class Balancing Strategy:")
+    if strategy == "undersample":
         df_class_0_under = df_class_0.sample(count_class_1)
         df_train_under = pd.concat([df_class_0_under, df_class_1], axis=0)
         print('Random under-sampling:')
         print(df_train_under.Exited.value_counts())
         X_train = df_train_under.drop([target_column], axis=1)
         y_train = df_train_under[target_column]
-    elif stretegy == "oversample":
+    elif strategy == "oversample":
         df_class_1_over = df_class_1.sample(count_class_0, replace=True)
         df_train_over = pd.concat([df_class_0, df_class_1_over], axis=0)
         print('Random over-sampling:')
