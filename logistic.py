@@ -19,7 +19,8 @@ from fomlads.model.classification import split_train_test
     
 
 def fit_evaluate_logistic(train_inputs, train_targets, test_inputs, test_targets):
-
+    train_inputs = standard_scaler(train_inputs)
+    test_inputs = standard_scaler(test_inputs)
 
     #Test the parameters
     reg_params = np.linspace(0, 1.5)
