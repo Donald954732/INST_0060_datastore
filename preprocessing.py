@@ -11,7 +11,7 @@ python pre-processing.py dataset
 
 
 
-def pre_process(input_data, word_label, target_column, test_ratio, strategy = 'oversample'):
+def pre_process(input_data, column_to_drop, word_label, target_column, test_ratio, strategy = 'oversample'):
 
     np.random.seed(123)
 
@@ -20,7 +20,11 @@ def pre_process(input_data, word_label, target_column, test_ratio, strategy = 'o
 
     print('\nDuplicated values {}'.format(input_data.duplicated().sum()))
 
+    #column_to_drop = list(input("Input the column to drop :").split(','))
+    print("Dropping column:", column_to_drop)
 
+    input_data = input_data.drop(column_to_drop, axis=1)
+    
     #word_label = list(input("Input the word label columns ").split(','))
     print("Category Label:", word_label)
     removing = []
@@ -39,7 +43,7 @@ def pre_process(input_data, word_label, target_column, test_ratio, strategy = 'o
     #test_ratio = float(input("Please Input train test ratio: "))
 
     #Split Data
-
+    from fomlads.model.classification import split_train_test
     train_set, test_set = split_train_test(input_data, test_ratio=test_ratio)
     X_test = test_set.drop([target_column], axis=1)
     y_test = test_set[target_column]
