@@ -6,10 +6,10 @@ from RandomForest import rf_main
 from preprocessing import pre_process
 
 
-def main(ifname, input_col = None,  target_col=None, experiment = None):
+def main(ifname, input_col = None,  target_col=None, experiment = None, column_to_drop = None):
      """
-     TO CALL: python model_comparison.py Churn_Modelling.csv Exited Logistic_Regression CreditScore,Geography,Gender,Age,Tenure,Balance,NumOfProducts,HasCrCard,IsActiveMember,EstimatedSalary    ----------
-
+     TO CALL: 
+python model_comparison.py Churn_Modelling.csv Exited Logistic_Regression CreditScore,Geography,Gender,Age,Tenure,Balance,NumOfProducts,HasCrCard,IsActiveMember,EstimatedSalary RowNumber,CustomerId,Surname 
     Imports the data-set and generates exploratory plots
     ifname -- filename/path of data file.
     input_cols -- list of column names for the input data
@@ -20,7 +20,7 @@ def main(ifname, input_col = None,  target_col=None, experiment = None):
      #data, inputs, targets, field_names, classes = import_for_classification(ifname, target_col=target_col)
      
      dataframe = pd.read_csv(ifname)
-   
+     column_to_drop = ['RowNumber', 'CustomerId', 'Surname']
      test_ratio = 0.2
      X_train, y_train, X_test, y_test = pre_process(dataframe, column_to_drop,  input_col, target_col, test_ratio)
 
@@ -63,3 +63,12 @@ if __name__ == "__main__":
                     main(
                         ifname=sys.argv[1], input_col= input_cols,
                         target_col=target_col, experiment=experiment)
+                    if len(sys.argv) == 5:
+                        main(
+                            ifname=sys.argv[1], input_col= input_cols,
+                            target_col=target_col, experiment=experiment)
+                    else:
+                        column_to_drop = sys.argv[5].split(',')
+                        main(
+                            ifname=sys.argv[1], input_col= input_cols,
+                            target_col=target_col, experiment=experiment, column_to_drop=column_to_drop)
