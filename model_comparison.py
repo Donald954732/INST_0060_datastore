@@ -4,7 +4,7 @@ from RandomForest import rf_main
 from preprocessing import pre_process
 
 
-def main(ifname, input_cols=None, target_col=None, classes=None, experiment = None ):
+def main(ifname, input_cols=None, target_col=None, classes=None, experiment = None, drop_col =None):
      """
     Imports the data-set and generates exploratory plots
 
@@ -14,17 +14,18 @@ def main(ifname, input_cols=None, target_col=None, classes=None, experiment = No
     input_cols -- list of column names for the input data
     target_col -- column name of the target data
     classes -- list of the classes to plot
+    experiment -- name of the model you want to test (Logistic_Regression, Random_Forest, Fisher, KNN)
     """
-
     inputs, targets, field_names, classes = import_for_classification(
         ifname, input_cols=input_cols, 
         target_col=target_col, classes=classes)
-
-    X_train, y_train, X_test, y_test = pre_process(input_data, column_to_drop, word_label, target_column, test_ratio, strategy)
+    
+    test_ratio = 0.2
+    X_train, y_train, X_test, y_test = pre_process(inputs, drop_col, word_label, targets, test_ratio, strategy)
 
     if experiment = "Logistic_Regression":
         fit_evaluate_logistic(X_train, y_train, X_test, y_test)
-    elif experiment = "Random_forest":
+    elif experiment = "Random_Forest":
         rf_main(X_train, y_train, X_test, y_test, weight_balance)
     #elif experiment = "Fisher":
     #elif experiment = "KNN":
@@ -63,3 +64,8 @@ if __name__ == "__main__":
                         main(
                             ifname=sys.argv[1], classes=classes,
                             input_cols=input_cols, target_col=target_col, experiment=experiment)
+                        else: 
+                            drop_col = sys.argv[6].split(',')
+                            main(
+                                ifname=sys.argv[1], classes=classes,
+                                input_cols=input_cols, target_col=target_col, experiment=experiment, drop_col = drop_col)
