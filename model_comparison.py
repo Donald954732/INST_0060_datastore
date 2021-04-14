@@ -7,9 +7,9 @@ from preprocessing import pre_process
 
 def main(ifname, input_col = None,  target_col=None, experiment = None):
      """
+     TO CALL: python model_comparison.py Churn_Modelling.csv Exited Logistic_Regression CreditScore,Geography,Gender,Age,Tenure,Balance,NumOfProducts,HasCrCard,IsActiveMember,EstimatedSalary    ----------
+
     Imports the data-set and generates exploratory plots
-python model_comparison.py Churn_Modelling.csv Exited Logistic_Regression RowNumber,CustomerId,Surnamepython model_comparison.py Churn_Modelling.csv Exited Logistic_Regression RowNumber,CustomerId,Surname    parameters
-    ----------
     ifname -- filename/path of data file.
     input_cols -- list of column names for the input data
     target_col -- column name of the target data
