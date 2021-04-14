@@ -17,45 +17,10 @@ from fomlads.evaluate.eval_classification import score
 from fomlads.model.classification import logistic_regression_fit
 from fomlads.model.classification import logistic_regression_predict
 from fomlads.model.classification import split_train_test
-
-def main():
-
-    #Read the file and clean the data
-    churn_data = pd.read_csv('Churn_Modelling.csv')
-    word_label = ['Geography', 'Gender']
-    removing = []
-
-    for column in word_label:
-        if(churn_data[column].dtype == np.str or churn_data[column].dtype == np.object):
-            for cat in churn_data[column].unique():
-                churn_data[column+'_'+cat] = np.where(churn_data[column] == cat, 1, 0)
-            removing.append(column)
-    churn_data = churn_data.drop(removing, axis = 1)
-
-    churn_data = churn_data.drop(['RowNumber', 'CustomerId', 'Surname'], axis =1)
-
-    #Normalise the data for the logistic regression 
-    need_normalization = [ 'CreditScore', 'Age', 'Tenure', 'Balance','NumOfProducts','EstimatedSalary']
-    churn_data[need_normalization] = standard_scaler(churn_data[need_normalization])
-
-    #Define inputs and targets in the dataframe
-    inputs= churn_data[need_normalization].to_numpy()
-    targets = churn_data['Exited'].to_numpy()
-
-
-    fit_evaluate_logistic(inputs, targets, churn_data)
     
 
-def fit_evaluate_logistic(inputs, targets, data):
+def fit_evaluate_logistic(train_inputs, train_targets, test_inputs, test_targets):
 
-    #Split the dataset into test and train sets
-    train_set, test_set = split_train_test(data, test_ratio= 0.2)
-
-    #Define inputs and outputs for both sets:
-    train_inputs = train_set[['CreditScore', 'Age', 'Tenure','Balance','NumOfProducts', 'EstimatedSalary']].to_numpy()
-    train_targets = train_set['Exited'].to_numpy()
-    test_inputs = test_set[['CreditScore', 'Age', 'Tenure','Balance','NumOfProducts', 'EstimatedSalary']].to_numpy()
-    test_targets = test_set['Exited'].to_numpy()
 
     #Test the parameters
     reg_params = np.linspace(0, 1.5)
@@ -88,6 +53,3 @@ def fit_evaluate_logistic(inputs, targets, data):
 
     plt.show()
 
-if __name__ == "__main__":
-    
-        main()

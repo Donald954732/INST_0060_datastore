@@ -7,6 +7,7 @@ from sklearn.ensemble import RandomForestClassifier
 import sys
 import pickle
 from preprocessing import pre_process
+import seaborn as sns
 
 
 #import preprocess 
@@ -30,7 +31,7 @@ from preprocessing import pre_process
 
 
 
-def rf_main(X_train, y_train, X_test, y_test, weight_balance):
+def rf_main(X_train, y_train, X_test, y_test, weight_balance=True):
     print("Building Classifier")
     if weight_balance == True:
         print("building classifier with balanced weight")
@@ -83,7 +84,7 @@ def rf_main(X_train, y_train, X_test, y_test, weight_balance):
     print("Feature importance")
     importance = pd.Series(rf_Classifier.feature_importances_, index=X_train.columns).sort_values(ascending=False)
     print(importance)
-    import seaborn as sns
+    
     plt.figure(figsize=(10,10))
     sns.barplot(x=importance, y=importance.index)
     # Add labels to your graph

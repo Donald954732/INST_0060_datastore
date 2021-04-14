@@ -175,8 +175,6 @@ def score(targets, predicts):
     for i in range(len(targets)):
         result[targets[i]][predicts[i]] += 1
 
-
-
     correct_prediction = result[1][1] + result[0][0]
     total_prediction = np.size(predicts)
     true_positives = result[1][1]
