@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-
+from fomlads.model.classification import split_train_test
 import sys
 
 '''
@@ -43,7 +43,7 @@ def pre_process(input_data, column_to_drop, word_label, target_column, test_rati
     #test_ratio = float(input("Please Input train test ratio: "))
 
     #Split Data
-    from fomlads.model.classification import split_train_test
+
     train_set, test_set = split_train_test(input_data, test_ratio=test_ratio)
     X_test = test_set.drop([target_column], axis=1)
     y_test = test_set[target_column]
