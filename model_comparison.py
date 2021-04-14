@@ -5,7 +5,7 @@ from RandomForest import rf_main
 from preprocessing import pre_process
 
 
-def main(ifname, target_col=None, experiment = None, drop_col =None, classes=None):
+def main(ifname, input_col = None,  target_col=None, experiment = None):
      """
     Imports the data-set and generates exploratory plots
 python model_comparison.py Churn_Modelling.csv Exited Logistic_Regression RowNumber,CustomerId,Surnamepython model_comparison.py Churn_Modelling.csv Exited Logistic_Regression RowNumber,CustomerId,Surname    parameters
@@ -16,10 +16,11 @@ python model_comparison.py Churn_Modelling.csv Exited Logistic_Regression RowNum
     classes -- list of the classes to plot
     experiment -- name of the model you want to test (Logistic_Regression, Random_Forest, Fisher, KNN)
     """
-     inputs, targets, field_names, classes = import_for_classification(ifname, target_col=target_col)
+     data, inputs, targets, field_names, classes = import_for_classification(ifname, target_col=target_col)
+     
 
      test_ratio = 0.2
-     X_train, y_train, X_test, y_test = pre_process(inputs, drop_col, field_names, targets, test_ratio)
+     X_train, y_train, X_test, y_test = pre_process(data, field_names, target_col, test_ratio)
 
      if experiment == "Logistic_Regression":
         fit_evaluate_logistic(X_train, y_train, X_test, y_test)
@@ -51,7 +52,7 @@ if __name__ == "__main__":
                     ifname=sys.argv[1], 
                     target_col=target_col, experiment=experiment)
                 if len(sys.argv) == 4:
-                    drop_col = sys.argv[4].split(',')
+                    input_cols = sys.argv[4].split(',')
                     main(
-                        ifname=sys.argv[1], 
-                        target_col=target_col, experiment=experiment, drop_col = drop_col)
+                        ifname=sys.argv[1], input_col= input_cols,
+                        target_col=target_col, experiment=experiment)
