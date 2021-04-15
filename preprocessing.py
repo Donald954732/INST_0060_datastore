@@ -11,7 +11,7 @@ python pre-processing.py dataset
 
 
 
-def pre_process(input_data, column_to_drop, word_label, target_column, test_ratio, strategy = 'oversample'):
+def pre_process(input_data, column_to_drop, target_column, test_ratio, strategy = 'oversample'):
 
     np.random.seed(123)
 
@@ -25,10 +25,9 @@ def pre_process(input_data, column_to_drop, word_label, target_column, test_rati
 
     input_data = input_data.drop(column_to_drop, axis=1)
     
-    #word_label = list(input("Input the word label columns ").split(','))
-    print("Category Label:", word_label)
+    #One-Hot vector encoding for categorical data
     removing = []
-    for column in word_label:
+    for column in input_data:
         if(input_data[column].dtype == np.str or input_data[column].dtype == np.object):
             for cat in input_data[column].unique():
                 input_data[column+'_'+cat] = np.where(input_data[column] == cat, 1, 0)

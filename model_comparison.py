@@ -3,13 +3,14 @@ import pandas as pd
 import numpy as np
 from logistic import fit_evaluate_logistic
 from RandomForest import rf_main
+from KNN_classifier import knn_main
 from preprocessing import pre_process
 
 
-def main(ifname, input_col = None,  target_col=None, experiment = None, column_to_drop = None):
+def main(ifname, target_col=None, experiment = None, column_to_drop = None):
      """
      TO CALL: 
-python model_comparison.py Churn_Modelling.csv Exited Logistic_Regression CreditScore,Geography,Gender,Age,Tenure,Balance,NumOfProducts,HasCrCard,IsActiveMember,EstimatedSalary RowNumber,CustomerId,Surname 
+python model_comparison.py Churn_Modelling.csv Exited Logistic_Regression RowNumber,CustomerId,Surname 
     Imports the data-set and generates exploratory plots
     ifname -- filename/path of data file.
     input_cols -- list of column names for the input data
@@ -17,23 +18,20 @@ python model_comparison.py Churn_Modelling.csv Exited Logistic_Regression Credit
     classes -- list of the classes to plot
     experiment -- name of the model you want to test (Logistic_Regression, Random_Forest, Fisher, KNN)
     """
-     #data, inputs, targets, field_names, classes = import_for_classification(ifname, target_col=target_col)
      
      dataframe = pd.read_csv(ifname)
-     column_to_drop = ['RowNumber', 'CustomerId', 'Surname']
+  
+     #Get the column with strings
      test_ratio = 0.2
-     X_train, y_train, X_test, y_test = pre_process(dataframe, column_to_drop,  input_col, target_col, test_ratio)
+     X_train, y_train, X_test, y_test = pre_process(dataframe, column_to_drop, target_col, test_ratio)
 
      if experiment == "Logistic_Regression":
-         X_train = np.array(X_train)
-         y_train = np.array(y_train)
-         X_test = np.array(X_test)
-         y_test= np.array(y_test)
          fit_evaluate_logistic(X_train, y_train, X_test, y_test)
      elif experiment == "Random_Forest":
          rf_main(X_train, y_train, X_test, y_test)
-    #elif experiment = "Fisher":
-    #elif experiment = "KNN":
+     elif experiment == "KNN":
+         knn_main(X_train, y_train, X_test, y_test)
+    #elif experiment == "Fisher":
 
 
 
@@ -59,16 +57,7 @@ if __name__ == "__main__":
                         ifname=sys.argv[1], 
                         target_col=target_col, experiment=experiment)
                 else:
-                    input_cols = sys.argv[4].split(',')
+                    column_to_drop = sys.argv[4].split(',')
                     main(
-                        ifname=sys.argv[1], input_col= input_cols,
+                        ifname=sys.argv[1],  column_to_drop=column_to_drop,
                         target_col=target_col, experiment=experiment)
-                    if len(sys.argv) == 5:
-                        main(
-                            ifname=sys.argv[1], input_col= input_cols,
-                            target_col=target_col, experiment=experiment)
-                    else:
-                        column_to_drop = sys.argv[5].split(',')
-                        main(
-                            ifname=sys.argv[1], input_col= input_cols,
-                            target_col=target_col, experiment=experiment, column_to_drop=column_to_drop)

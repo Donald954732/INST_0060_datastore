@@ -19,18 +19,17 @@ from fomlads.model.classification import split_train_test
     
 
 def fit_evaluate_logistic(train_inputs, train_targets, test_inputs, test_targets):
+    
+    train_inputs = train_inputs[['CreditScore', 'Age', 'Tenure','Balance','NumOfProducts', 'EstimatedSalary']].to_numpy()
+    train_targets = train_targets.to_numpy()
+    test_inputs = test_inputs[['CreditScore', 'Age', 'Tenure','Balance','NumOfProducts', 'EstimatedSalary']].to_numpy()
+    test_targets= test_targets.to_numpy()
+
     train_inputs = standard_scaler(train_inputs)
     test_inputs = standard_scaler(test_inputs)
 
-    #Test the parameters
-    reg_params = np.linspace(0, 1.5)
-    train_errors, test_errors = test_parameter_logistic(train_inputs, train_targets, test_inputs, test_targets, parameter_values= reg_params)
-    
-    #Plot the test and train errors 
-    plot_train_test_errors('Threshold', reg_params, train_errors, test_errors)
-
     #fit the model to the train data
-    weights = logistic_regression_fit(train_inputs, train_targets, threshold = 1e-8)
+    weights = logistic_regression_fit(train_inputs, train_targets, threshold = 1e-15)
     #Get the prediction for the test data
     y_pred = logistic_regression_predict(test_inputs, weights)
     #Metrics
@@ -47,9 +46,8 @@ def fit_evaluate_logistic(train_inputs, train_targets, test_inputs, test_targets
     print(f1)
 
 
-
     plt.figure(figsize=(15,7))
-    prob_vector = logistic_regression_prediction_probs(train_inputs, weights)
+    prob_vector = logistic_regression_prediction_probs(test_inputs, weights)
     #print(prob_vector)
     print(len(prob_vector))
     ROC = roc(prob_vector,test_targets, partitions=100)

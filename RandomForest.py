@@ -90,7 +90,7 @@ def rf_main(X_train, y_train, X_test, y_test, weight_balance=True):
     # Add labels to your graph
     plt.xlabel('Importance Score')
     plt.ylabel('Features')
-    plt.title("Freature Importances Plot")
+    plt.title("Feature Importances Plot")
     plt.show()
 
 if __name__ == '__main__':
