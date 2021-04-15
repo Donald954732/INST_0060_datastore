@@ -72,7 +72,7 @@ def pre_process(input_data, column_to_drop, target_column, test_ratio, strategy 
         X_train = df_train_over.drop([target_column], axis=1)
         y_train = df_train_over[target_column]
     else:
-        print("no stretegy")
+        print("no strategy")
         X_train = train_set.drop([target_column], axis=1)
         y_train = train_set[target_column]
     

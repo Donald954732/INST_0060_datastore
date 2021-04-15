@@ -29,7 +29,7 @@ def fit_evaluate_logistic(train_inputs, train_targets, test_inputs, test_targets
     test_inputs = standard_scaler(test_inputs)
 
     #fit the model to the train data
-    weights = logistic_regression_fit(train_inputs, train_targets, threshold = 1e-15)
+    weights = logistic_regression_fit(train_inputs, train_targets, threshold = 1e-8)
     #Get the prediction for the test data
     y_pred = logistic_regression_predict(test_inputs, weights)
     #Metrics
