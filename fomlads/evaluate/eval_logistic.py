@@ -6,9 +6,6 @@ from fomlads.evaluate.eval_classification import misclassification_error
 from fomlads.model.classification import logistic_regression_fit
 from fomlads.model.classification import logistic_regression_predict
 from fomlads.model.classification import logistic_regression_prediction_probs
-from fomlads.plot.evaluations import plot_train_test_errors
-from fomlads.model.classification import split_train_test
-from fomlads.evaluate.eval_classification import cross_entropy_error
 
 def test_parameter_logistic(train_inputs, train_targets, test_inputs, test_targets, parameter_values= np.linspace(0, 2), parameter_name = 'Threshold'):
     """ 

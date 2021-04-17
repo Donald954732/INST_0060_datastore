@@ -2,15 +2,25 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import random
-from fomlads.evaluate.eval_classification import score, two_class_cf_matrix, roc , roc_auc, two_class_f1_score
+from fomlads.evaluate.eval_classification import two_class_cf_matrix, roc , roc_auc, two_class_f1_score
 from sklearn.neighbors import KNeighborsClassifier 
 import sys
 import pickle
-import seaborn as sns
+from fomlads.data.external import standard_scaler
 
 
 def knn_main(X_train, y_train, X_test, y_test):
+    """
+    Takes inputs and targets split in test and train
+    Fit Knn Model 
+    Return performance metrics F1, confusion matrix, AUC ROC
+    """
+    #standardise the inputs
+    X_train = standard_scaler(X_train)
+    X_test = standard_scaler(X_test)
+
     print("Building Classifier")
+    
    
     print("building classifier with balanced weight")
     knn = KNeighborsClassifier(n_neighbors=90)

@@ -1,25 +1,20 @@
-import pandas as pd
 import matplotlib.pyplot as plt
-from itertools import chain
-
-
 import numpy as np 
 
-from fomlads.data.external import import_for_classification
-from fomlads.data.external import standard_scaler
-from fomlads.plot.evaluations import plot_roc
-from fomlads.plot.evaluations import plot_train_test_errors
 
-from fomlads.evaluate.eval_logistic import test_parameter_logistic
-from fomlads.evaluate.eval_classification import score, two_class_cf_matrix, roc , roc_auc, two_class_f1_score
+from fomlads.data.external import standard_scaler
+from fomlads.evaluate.eval_classification import two_class_cf_matrix, roc , roc_auc, two_class_f1_score
 
 from fomlads.model.classification import logistic_regression_fit
 from fomlads.model.classification import logistic_regression_predict, logistic_regression_prediction_probs
-from fomlads.model.classification import split_train_test
     
 
 def fit_evaluate_logistic(train_inputs, train_targets, test_inputs, test_targets):
-    
+    """
+    Takes train and test data as input 
+    Fits a logistic regression 
+    Return F1 score, confusion matrix and AUC ROC 
+    """
     train_inputs = train_inputs[['CreditScore', 'Age', 'Tenure','Balance','NumOfProducts', 'EstimatedSalary']].to_numpy()
     train_targets = train_targets.to_numpy()
     test_inputs = test_inputs[['CreditScore', 'Age', 'Tenure','Balance','NumOfProducts', 'EstimatedSalary']].to_numpy()

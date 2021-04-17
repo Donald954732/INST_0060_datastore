@@ -21,7 +21,7 @@ python model_comparison.py Churn_Modelling.csv Exited Logistic_Regression RowNum
      
      dataframe = pd.read_csv(ifname)
   
-     #Get the column with strings
+     
      test_ratio = 0.2
      X_train, y_train, X_test, y_test = pre_process(dataframe, column_to_drop, target_col, test_ratio)
 

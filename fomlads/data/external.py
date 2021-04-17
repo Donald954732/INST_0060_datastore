@@ -171,7 +171,7 @@ def import_data_simple(ifname, delimiter=None, header=False, columns=None):
 
 def standard_scaler(data):
     """ 
-    Takes pandas dataframe data, normalise it and then retun the normalise version
+    Takes inputs, normalise it and then retun the normalise version
     """
     return (data-np.mean(data))/(np.std(data))
 

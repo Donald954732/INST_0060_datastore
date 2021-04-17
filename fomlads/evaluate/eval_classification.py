@@ -85,65 +85,6 @@ def cross_entropy_error(targets, predict_probs):
         targets*np.log(predict_probs) + (1-targets)*np.log(1-predict_probs))/N
     return error
 
-def confusion_matrix(targets, y_prediction):
-    """
-    Creating and plotting a confusion matrix 
-
-    targets - actual y as a pd dataframe
-    y_prediciton - prediction as a pd dataframe
-
-    returns
-    -------
-    fig, ax of the confusion matrix
-    """
-    K = len(np.unique(targets))
-    result = np.zeros((K,K))
-    
-    
-    for i in range(len(targets)):
-        result[targets[i]][y_prediction[i]] += 1
-
-
-    def plot_confusion_matrix(cm, classes,normalize=False,title='Confusion matrix', cmap=plt.cm.gist_heat):
-        """
-        This function prints and plots the confusion matrix.
-        Normalization can be applied by setting `normalize=True`.
-        """
-        if normalize:
-            cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-            print("Normalized confusion matrix")
-        else:
-            print('Confusion matrix, without normalization')
-
-        print(cm)
-
-        fig = plt.figure()
-        ax = fig.add_subplot(1,1,1)
-
-
-        plt.imshow(cm, interpolation='nearest', cmap=cmap)
-        plt.title(title)
-        plt.colorbar()
-        tick_marks = np.arange(len(classes))
-        plt.xticks(tick_marks, classes, rotation=45)
-        plt.yticks(tick_marks, classes)
-
-        fmt = '.2f' if normalize else 'd'
-        thresh = cm.max() / 2.
-        #for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
-        #    plt.text(int(j), int(i), format(cm[i, j], fmt),
-        #            horizontalalignment="center",
-        #            color="white" if cm[i, j] > thresh else "black")
-
-        plt.ylabel('True label')
-        plt.xlabel('Predicted label')
-        plt.tight_layout() 
-        return fig, ax
-
-
-    return plot_confusion_matrix(result, np.unique(targets))
-
-
 def false_true_rates(inputs, targets,  weights, thresholds):
     """ 
     takes inputs and weights and get the prediction to then evaluate the number of false positive and true positive rates 
@@ -168,23 +109,6 @@ def false_true_rates(inputs, targets,  weights, thresholds):
         false_positive_rates[i] = np.sum(num_false_positives)/num_neg
         true_positive_rates[i] = np.sum(num_true_positives)/num_pos
     return false_positive_rates, true_positive_rates
-
-def score(targets, predicts):
-    K = len(np.unique(targets))
-    result = np.zeros((K,K))
-    for i in range(len(targets)):
-        result[targets[i]][predicts[i]] += 1
-
-    correct_prediction = result[1][1] + result[0][0]
-    total_prediction = np.size(predicts)
-    true_positives = result[1][1]
-    predicted_postives = result[1][1] + result[1][0]
-    actual_positves = result[1][1] + result[0][1]
-    precision = true_positives/predicted_postives
-    recall = true_positives/ actual_positves
-    f1=  2*(precision* recall)/(precision+ recall)
-    accuracy = correct_prediction/total_prediction
-    return f1, precision, recall, accuracy
 
 
 

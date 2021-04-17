@@ -3,15 +3,17 @@ import numpy as np
 from fomlads.model.classification import split_train_test
 import sys
 
-'''
-This module pre process that data my removing column out of scope and encoding word labe column in one hot vector
-run:
-python pre-processing.py dataset
-'''
-
-
 
 def pre_process(input_data, column_to_drop, target_column, test_ratio, strategy = 'oversample'):
+    """
+    Takes the dataset as well as the column which will not be used and the target and the test ratio
+    Checks for null values and duplicated values
+    Performs one hot vectors encoding 
+    Apply the relevant strategy to the data to over or under sample and deal with the imbalanced classes. 
+
+    Returns the data split into train and test inputs and targets. 
+
+    """
 
     np.random.seed(123)
 
@@ -20,7 +22,7 @@ def pre_process(input_data, column_to_drop, target_column, test_ratio, strategy 
 
     print('\nDuplicated values {}'.format(input_data.duplicated().sum()))
 
-    #column_to_drop = list(input("Input the column to drop :").split(','))
+   
     print("Dropping column:", column_to_drop)
 
     input_data = input_data.drop(column_to_drop, axis=1)
@@ -38,11 +40,9 @@ def pre_process(input_data, column_to_drop, target_column, test_ratio, strategy 
     print(input_data.head())
     input_data.to_csv("processed.csv")
 
-    #target_column = input("Please Input Target Column: ")
-    #test_ratio = float(input("Please Input train test ratio: "))
 
     #Split Data
-    from fomlads.model.classification import split_train_test
+    
     train_set, test_set = split_train_test(input_data, test_ratio=test_ratio)
     X_test = test_set.drop([target_column], axis=1)
     y_test = test_set[target_column]
@@ -56,7 +56,7 @@ def pre_process(input_data, column_to_drop, target_column, test_ratio, strategy 
     print("0: ",count_class_0)
     print("1: ",count_class_1)
 
-    #strategy = input("Please Input Class Balancing Strategy:")
+    #Strategies to deal with imbalanced classes
     if strategy == "undersample":
         df_class_0_under = df_class_0.sample(count_class_1)
         df_train_under = pd.concat([df_class_0_under, df_class_1], axis=0)
@@ -77,22 +77,3 @@ def pre_process(input_data, column_to_drop, target_column, test_ratio, strategy 
         y_train = train_set[target_column]
     
     return X_train, y_train, X_test, y_test
-
-if __name__ == '__main__':
-    '''
-    column_to_drop = list(input("Input the column to drop :").split(','))
-    word_label = list(input("Input the word label columns ").split(','))
-    target_column = input("Please Input Target Column: ")
-    test_ratio = float(input("Please Input train test ratio: "))
-    stretegy = input("Please Input Class Balancing Stretegy:")
-    '''
-    ##for testing 
-    column_to_drop = ['RowNumber', 'Surname', 'CustomerId']
-    word_label = ['Gender', 'Geography']
-    target_column = "Exited"
-    test_ratio = 0.2
-    stretegy = "oversample"
-    ##
-    input_data = pd.read_csv(sys.argv[1])
-    input_data.head()
-    pre_process(input_data, column_to_drop, word_label, target_column, test_ratio, stretegy)
