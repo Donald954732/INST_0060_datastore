@@ -15,9 +15,16 @@ def fit_evaluate_logistic(train_inputs, train_targets, test_inputs, test_targets
     Fits a logistic regression 
     Return F1 score, confusion matrix and AUC ROC 
     """
-    train_inputs = train_inputs[['CreditScore', 'Age', 'Tenure','Balance','NumOfProducts', 'EstimatedSalary']].to_numpy()
+
+    #drop the catagorical encodings 
+    binary_col = [*train_inputs.loc[:,train_inputs.isin([0,1]).all()].columns]
+    train_inputs = train_inputs.drop(binary_col, axis = 1)
+    test_inputs = test_inputs.drop(binary_col, axis=1)
+
+    #transform pd dataframe into numpy array
+    train_inputs = train_inputs.to_numpy()
     train_targets = train_targets.to_numpy()
-    test_inputs = test_inputs[['CreditScore', 'Age', 'Tenure','Balance','NumOfProducts', 'EstimatedSalary']].to_numpy()
+    test_inputs = test_inputs.to_numpy()
     test_targets= test_targets.to_numpy()
 
     train_inputs = standard_scaler(train_inputs)
