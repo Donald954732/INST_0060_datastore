@@ -2,41 +2,71 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-from fomlads.data.external import import_for_classification
+from fomlads.data.external import standard_scaler
+
+from fomlads.evaluate.eval_classification import two_class_cf_matrix, roc , roc_auc, two_class_f1_score
 
 from fomlads.model.classification import project_data
 from fomlads.model.classification import maximum_separation_projection
 from fomlads.model.classification import fisher_linear_discriminant_projection
 
+
 from fomlads.plot.exploratory import plot_scatter_array_classes
 from fomlads.plot.exploratory import plot_class_histograms
 from fomlads.plot.evaluations import plot_roc
 
-def main(ifname, input_cols=None, target_col=None, classes=None):
-    """
-    Imports the data-set and generates exploratory plots
+def fisher_main(train_inputs, train_targets, test_inputs, test_targets):
+    #drop the catagorical encodings 
+    binary_col = [*train_inputs.loc[:,train_inputs.isin([0,1]).all()].columns]
+    train_inputs = train_inputs.drop(binary_col, axis = 1)
+    test_inputs = test_inputs.drop(binary_col, axis=1)
 
-    parameters
-    ----------
-    ifname -- filename/path of data file.
-    input_cols -- list of column names for the input data
-    target_col -- column name of the target data
-    classes -- list of the classes to plot
-    """
-    inputs, targets, field_names, classes = import_for_classification(
-        ifname, input_cols=input_cols, 
-        target_col=target_col, classes=classes)
-    plot_scatter_array_classes(inputs, targets, field_names=field_names, 
-        classes=classes)
-    project_and_histogram_data(inputs, targets, method='maximum_separation',
-        classes=classes)
-    project_and_histogram_data(inputs, targets, method='fisher',
-        classes=classes)
-    fig, ax = construct_and_plot_roc(
-        inputs, targets, method='maximum_separation', colour='g')
-    construct_and_plot_roc(
-        inputs, targets, method='fisher', colour='b', fig_ax=(fig,ax))
-    ax.legend(["maximum_separation", "fisher"])       
+    #transform pd dataframe into numpy array
+    train_inputs = train_inputs.to_numpy()
+    train_targets = train_targets.to_numpy()
+    test_inputs = test_inputs.to_numpy()
+    test_targets= test_targets.to_numpy()
+
+    train_inputs = standard_scaler(train_inputs)
+    test_inputs = standard_scaler(test_inputs)
+
+    classes = ['0','1']
+    project_and_histogram_data(train_inputs, train_targets, method='fisher', classes=classes)
+
+    #calculate weights
+    weights = get_projection_weights(train_inputs, train_targets, method='fisher')
+
+    #project test set to 1-D
+    projected_inputs = project_data(test_inputs, weights)
+
+    #threshold
+    threshold = -0.54339884
+    y_pred = np.empty(2000)
+    for i in range(len(projected_inputs)):
+        if projected_inputs[i] < threshold:
+            y_pred[i] = classes[0]
+        else:
+            y_pred[i] = classes[1]
+
+    #graph 1-D projection
+    project_and_histogram_data(test_inputs, y_pred, method='fisher', classes=classes)
+
+    #Metrics
+    print("Metrics:")
+
+    #CF Matrix
+    print("Confusion Matrix")
+    cf = two_class_cf_matrix(test_targets, y_pred)
+    print(cf)
+
+    #F1 Score
+    print("F1_Score")
+    f1 = two_class_f1_score(test_targets, y_pred)
+    print(f1)
+
+    #ROC
+    construct_and_plot_roc(test_inputs, y_pred, method='fisher', colour='b')
+
     plt.show()
 
 def project_and_histogram_data(
@@ -108,38 +138,8 @@ def get_projection_weights(inputs, targets, method):
     """
     if len(np.unique(targets)) > 2:
         raise ValueError("This method only supports data with two classes")
-    if method == 'maximum_separation':
-        weights = maximum_separation_projection(inputs, targets)
-    elif method == 'fisher':
+    if method == 'fisher':
         weights = fisher_linear_discriminant_projection(inputs, targets)
     else:
         raise ValueError("Unrecognised projection method")
     return weights
-
-if __name__ == "__main__":
-    import sys
-    if len(sys.argv) == 1:
-        main() # calls the main function with no arguments
-    else:
-        # assumes that the first argument is the input filename/path
-        if len(sys.argv) == 2:
-            main(ifname=sys.argv[1])
-        else:
-            # assumes that the second argument is a comma separated list of 
-            # the classes to plot
-            classes = sys.argv[2].split(',')
-            if len(sys.argv) == 3:
-                main(ifname=sys.argv[1], classes=classes)
-            else:
-                # assumes that the third argument is the list of target column
-                target_col = sys.argv[3]
-                if len(sys.argv) == 4:
-                    main(
-                        ifname=sys.argv[1], classes=classes,
-                        target_col=target_col)
-                # assumes that the fourth argument is the list of input columns
-                else:
-                    input_cols = sys.argv[4].split(',')
-                    main(
-                        ifname=sys.argv[1], classes=classes,
-                        input_cols=input_cols, target_col=target_col)
