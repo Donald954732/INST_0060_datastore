@@ -171,9 +171,13 @@ def import_data_simple(ifname, delimiter=None, header=False, columns=None):
 
 def standard_scaler(data):
     """ 
-    Takes inputs, normalise it and then retun the normalise version
+    Takes inputs, standardise it and then retun the standardised version
     """
     return (data-np.mean(data))/(np.std(data))
 
-
+def normalise(data): 
+    """
+    Takes inputs, and then normalise it and then return the normalise version 
+    """ 
+    return (data-np.min(data))/(np.max(data)-np.min(data))
     
