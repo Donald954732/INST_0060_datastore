@@ -4,6 +4,7 @@ import numpy as np
 from logistic import fit_evaluate_logistic, logistic_hyperparameters
 from RandomForest import rf_main
 from KNN_classifier import knn_main
+from fisher import fisher_main
 from preprocessing import pre_process
 
 
@@ -32,7 +33,8 @@ python model_comparison.py Churn_Modelling.csv Exited Logistic_Regression RowNum
          rf_main(X_train, y_train, X_test, y_test)
      elif experiment == "KNN":
          knn_main(X_train, y_train, X_test, y_test)
-    #elif experiment == "Fisher":
+     elif experiment == "Fisher":
+         fisher_main(X_train, y_train, X_test, y_test)
 
 
 
