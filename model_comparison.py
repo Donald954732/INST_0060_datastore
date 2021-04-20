@@ -1,10 +1,11 @@
 from fomlads.data.external import import_for_classification
 import pandas as pd
 import numpy as np
-from logistic import fit_evaluate_logistic
+from logistic import fit_evaluate_logistic, logistic_hyperparameters
 from RandomForest import rf_main
 from KNN_classifier import knn_main
 from preprocessing import pre_process
+
 
 
 def main(ifname, target_col=None, experiment = None, column_to_drop = None):
