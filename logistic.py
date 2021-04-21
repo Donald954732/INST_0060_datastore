@@ -19,8 +19,8 @@ def logistic_hyperparameters(train_inputs, train_targets,validation_inputs, vali
     train_inputs = standard_scaler(train_inputs)
 
      #Test the parameters
-    reg_params = np.linspace(0, 0.75, num=50)
-    train_errors, test_errors = test_parameter_logistic(train_inputs, train_targets, validation_inputs, validation_targets , parameter_values= reg_params)
+    reg_params = np.linspace(0, 2)
+    train_errors, test_errors = test_parameter_logistic(train_inputs, train_targets, validation_inputs, validation_targets , parameter_values= reg_params, parameter_name = 'Threshold')
     
     #Plot the test and train errors 
     plot_train_test_errors('Threshold', reg_params, train_errors, test_errors)
