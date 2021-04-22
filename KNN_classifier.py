@@ -2,12 +2,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import random
-from fomlads.evaluate.eval_classification import two_class_cf_matrix, roc , roc_auc, two_class_f1_score
+from fomlads.evaluate.eval_classification import two_class_cf_matrix, roc , roc_auc, two_class_f1_score, misclassification_error
 from sklearn.neighbors import KNeighborsClassifier 
 import sys
 import pickle
 from fomlads.data.external import standard_scaler
-
+from fomlads.data.external import normalise
 
 def knn_main(X_train, y_train, X_test, y_test):
     """
@@ -15,15 +15,15 @@ def knn_main(X_train, y_train, X_test, y_test):
     Fit Knn Model 
     Return performance metrics F1, confusion matrix, AUC ROC
     """
-    #standardise the inputs
-    X_train = standard_scaler(X_train)
-    X_test = standard_scaler(X_test)
+    #normalise the inputs
+    X_train = normalise(X_train)
+    X_test = normalise(X_test)
 
     print("Building Classifier")
     
    
     print("building classifier with balanced weight")
-    knn = KNeighborsClassifier(n_neighbors=90)
+    knn = KNeighborsClassifier(n_neighbors=89)
     knn.fit(X_train, y_train)
         
 
@@ -61,5 +61,37 @@ def knn_main(X_train, y_train, X_test, y_test):
 
     #AUC-ROC
     auc = roc_auc(prob_vector,y_test, partitions=100)
-    print('Area under curve={}'.format(auc))
     plt.show()
+    print('Area under curve={}'.format(auc))
+    
+
+    print("the graph below illustrates values of k varying with neighbors ")
+    
+ 
+    plt.style.use('ggplot')
+
+    neighbors = np.arange(1,100)
+    train_accuracy = []
+    test_accuracy = []
+    for i,k in enumerate(neighbors):
+        #Setup a knn classifier with k neighbors
+        knn = KNeighborsClassifier(n_neighbors=k)
+        
+        #Fit the model
+        knn.fit(X_train, y_train)
+        
+        #Compute accuracy on the training set
+        train_accuracy.append(knn.score(X_train, y_train))
+        
+        #Compute accuracy on the test set
+        test_accuracy.append(knn.score(X_test, y_test)) 
+        
+    plt.title('k-NN Varying number of neighbors')
+    plt.plot(neighbors, test_accuracy, label='Testing Accuracy')
+    plt.plot(neighbors, train_accuracy, label='Training accuracy')
+    plt.legend()
+    plt.xlabel('Number of neighbors')
+    plt.ylabel('Accuracy')
+    plt.show()
+    print("Best accuracy is {} with K = {}".format(np.max(test_accuracy),1+test_accuracy.index(np.max(test_accuracy))))
+
