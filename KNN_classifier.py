@@ -94,4 +94,23 @@ def knn_main(X_train, y_train, X_test, y_test):
     plt.ylabel('Accuracy')
     plt.show()
     print("Best accuracy is {} with K = {}".format(np.max(test_accuracy),1+test_accuracy.index(np.max(test_accuracy))))
+    
+    
+    error = []
+
+    # Calculating error for K values between 1 and 100
+    for i in range(1, 100):
+        knn = KNeighborsClassifier(n_neighbors=i)
+        knn.fit(X_train, y_train)
+        pred_i = knn.predict(X_test)
+        error.append(np.mean(pred_i != y_test))
+
+    plt.figure(figsize=(12, 6))
+    plt.plot(range(1, 100), error, color='red', linestyle='dashed', marker='o',
+            markerfacecolor='blue', markersize=10)
+    plt.title('Error Rate K Value')
+    plt.xlabel('K Value')
+    plt.ylabel('Mean Error')
+    plt.show()
+
 
