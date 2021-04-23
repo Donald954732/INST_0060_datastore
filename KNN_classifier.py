@@ -98,7 +98,7 @@ def knn_main(X_train, y_train, X_test, y_test):
     
     error = []
 
-    # Calculating error for K values between 1 and 100
+    # Calculating error for different K values between 1 and 100
     for i in range(1, 100):
         knn = KNeighborsClassifier(n_neighbors=i)
         knn.fit(X_train, y_train)
