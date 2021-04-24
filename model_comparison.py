@@ -1,11 +1,10 @@
-from fomlads.data.external import import_for_classification
 import pandas as pd
 import numpy as np
-from logistic import fit_evaluate_logistic, logistic_hyperparameters
-from RandomForest import rf_main
-from KNN_classifier import knn_main
-from fisher import fisher_main
-from preprocessing import pre_process
+from model_fit.logistic import fit_evaluate_logistic
+from model_fit.RandomForest import rf_main
+from model_fit.KNN_classifier import knn_main
+from model_fit.fisher import fisher_main
+from fomlads.data.preprocessing import pre_process
 
 
 

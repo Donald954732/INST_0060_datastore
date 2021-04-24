@@ -10,8 +10,6 @@ import seaborn as sns
 
 
 
-
-
 def rf_main(X_train, y_train, X_test, y_test, weight_balance=True):
     """
     dataset: directory to data set

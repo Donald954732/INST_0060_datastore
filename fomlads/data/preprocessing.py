@@ -38,7 +38,7 @@ def pre_process(input_data, column_to_drop, target_column, test_ratio, strategy 
 
     print("Data after pre-processing")
     print(input_data.head())
-    input_data.to_csv("processed.csv")
+
 
 
     #Split Data
