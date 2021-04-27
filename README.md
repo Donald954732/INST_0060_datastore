@@ -2,7 +2,7 @@
 
 ## About 
 
-* This project compare 4 models' performance on a bank consuemr dataset. 
+* This project compare 4 models' performance on a bank consumers dataset. 
 * The four models are:
 - Logistic Regression 
 - Random Forest
@@ -17,7 +17,7 @@ The steps to follow to create the relevant environment are in the Requirements s
 
 ## Usage
 
-To run the experiment use the following structure: 
+To run the experiment use the following syntax on your machine's terminal: 
 python model_comparison.py <file.csv> <target_value> <model> <column_to_drop>
 
 The experiment value options are: 
