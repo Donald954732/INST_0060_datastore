@@ -65,7 +65,7 @@ def fisher_main(train_inputs, train_targets, test_inputs, test_targets):
     print(f1)
 
     #ROC
-    construct_and_plot_roc(test_inputs, y_pred, method='fisher', colour='b')
+    construct_and_plot_roc(train_inputs, train_targets, method='fisher', colour='g')
 
     plt.show()
 
